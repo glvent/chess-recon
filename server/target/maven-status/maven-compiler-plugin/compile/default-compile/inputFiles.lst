@@ -1,0 +1,12 @@
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Rook.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Knight.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/King.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Piece.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Bishop.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/ws/WebSocketConfig.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Pawn.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/game/Position.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/ws/Application.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/game/Game.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/piece/Queen.java
+/Applications/Projects/Java-Projects/chess/server/src/main/java/org/example/ws/WebSocketHandler.java

@@ -6,13 +6,24 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="chessrecon" />
+        <module name="socketio-server-java-demo" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="chess-recon" target="1.8" />
+      <module name="chessrecon" target="1.8" />
+      <module name="my-websocket-app" target="1.8" />
+      <module name="server" target="1.7" />
+      <module name="ws-server-logic" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="chess-recon" options="-parameters" />
       <module name="chessrecon" options="-parameters" />
+      <module name="my-websocket-app" options="-parameters" />
+      <module name="socketio-server-java-demo" options="-parameters" />
+      <module name="ws-server-logic" options="-parameters" />
     </option>
   </component>
 </project>

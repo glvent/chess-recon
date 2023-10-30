@@ -1,15 +1,16 @@
-package org.example.board;
+package org.example.game;
 
+import com.google.gson.Gson;
 import org.example.piece.*;
 import java.util.ArrayList;
 
-public class Board {
+public class Game {
     public final int BOARD_RANKS = 8;
     public final int BOARD_FILES = 8;
     public Piece[][] board;
     public ArrayList<String> history;
 
-    public Board() {
+    public Game() {
         board = new Piece[BOARD_RANKS][BOARD_FILES];
         history = new ArrayList<>();
         initGame();
@@ -48,7 +49,6 @@ public class Board {
     }
 
     public void printBoard() {
-        String letter = "abcdefghijklmnopqrstuvwxyz";
         int i = BOARD_RANKS;
         for (Piece[] rank : board) {
             System.out.print(i + "  ");
@@ -92,4 +92,5 @@ public class Board {
         }
         return notation;
     }
+
 }

@@ -1,0 +1,12 @@
+org/example/piece/Bishop.class
+org/example/game/Game.class
+org/example/piece/Piece.class
+org/example/piece/Knight.class
+org/example/ws/Application.class
+org/example/piece/Rook.class
+org/example/piece/Queen.class
+org/example/ws/WebSocketHandler.class
+org/example/ws/WebSocketConfig.class
+org/example/game/Position.class
+org/example/piece/Pawn.class
+org/example/piece/King.class

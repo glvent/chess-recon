@@ -1,4 +1,6 @@
-package piece;
+package org.example.piece;
+
+import org.example.game.Position;
 
 public class Rook extends Piece {
 
