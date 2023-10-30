@@ -1,4 +1,4 @@
-package server.piece;
+package piece;
 
 public class Pawn extends Piece {
 

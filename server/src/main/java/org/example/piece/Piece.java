@@ -1,4 +1,4 @@
-package server.piece;
+package piece;
 
 public abstract class Piece {
     Position pos;

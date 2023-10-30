@@ -1,7 +1,6 @@
-package server.main;
+package org.example.board;
 
-import server.piece.*;
-
+import org.example.piece.*;
 import java.util.ArrayList;
 
 public class Board {
@@ -37,14 +36,14 @@ public class Board {
             board[6][i] = new Pawn(false, new Position(6, i));
         }
 
-        board[7][0] = new Rook(true, new Position(7, 0));
-        board[7][1] = new Knight(true, new Position(7, 1));
-        board[7][2] = new Bishop(true, new Position(7, 2));
-        board[7][3] = new Queen(true, new Position(7, 3));
-        board[7][4] = new King(true, new Position(7, 4));
-        board[7][5] = new Bishop(true, new Position(7, 5));
-        board[7][6] = new Knight(true, new Position(7, 6));
-        board[7][7] = new Rook(true, new Position(7, 7));
+        board[7][0] = new Rook(false, new Position(7, 0));
+        board[7][1] = new Knight(false, new Position(7, 1));
+        board[7][2] = new Bishop(false, new Position(7, 2));
+        board[7][3] = new Queen(false, new Position(7, 3));
+        board[7][4] = new King(false, new Position(7, 4));
+        board[7][5] = new Bishop(false, new Position(7, 5));
+        board[7][6] = new Knight(false, new Position(7, 6));
+        board[7][7] = new Rook(false, new Position(7, 7));
 
     }
 

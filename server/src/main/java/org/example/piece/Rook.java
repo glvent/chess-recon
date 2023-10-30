@@ -1,10 +1,11 @@
-package server.piece;
+package piece;
 
-public class Knight extends Piece {
+public class Rook extends Piece {
 
-    public Knight(boolean isWhite, Position pos) {
+    public Rook(boolean isWhite, Position pos) {
         super(pos, isWhite);
-        name = 'N';
+
+        name = 'R';
     }
 
     @Override

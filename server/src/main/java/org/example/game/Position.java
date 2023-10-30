@@ -1,4 +1,4 @@
-package server.piece;
+package org.example.board;
 
 public class Position {
     int rank;
