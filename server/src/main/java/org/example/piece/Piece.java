@@ -5,7 +5,9 @@ import org.example.game.Position;
 public abstract class Piece {
     Position pos;
     boolean isWhite;
-    public char name;
+    char name;
+    boolean isCaptured;
+
 
     public Piece(Position pos, boolean isWhite) {
         this.pos = pos;
@@ -21,8 +23,20 @@ public abstract class Piece {
         this.pos = pos;
     }
 
-    public boolean isWhite() {
+    public boolean getIsWhite() {
         return isWhite;
+    }
+
+    public void setIsCaptured(boolean isCaptured) {
+        this.isCaptured = isCaptured;
+    }
+
+    public boolean getIsCaptured() {
+        return this.isCaptured;
+    }
+
+    public char getName() {
+        return name;
     }
 
     public abstract boolean isValidMove(Position from, Position to);
