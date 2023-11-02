@@ -1,12 +1,14 @@
 package org.example.piece;
 
+import org.example.game.Move;
 import org.example.game.Position;
 
 public abstract class Piece {
-    Position pos;
-    boolean isWhite;
-    char name;
-    boolean isCaptured;
+    private Position pos;
+    private boolean isWhite;
+    private char name;
+    boolean isCaptured = false;
+    boolean isFirstMove = true;
 
 
     public Piece(Position pos, boolean isWhite) {
@@ -19,8 +21,18 @@ public abstract class Piece {
         return letter.charAt(i);
     }
 
+    public abstract boolean isValidMove(Position from, Position to, Piece capturedPiece, Move prevMove);
+
     public void setPosition(Position pos) {
         this.pos = pos;
+    }
+
+    public Position getPosition() {
+        return pos;
+    }
+
+    public void setIsWhite(boolean isWhite) {
+        this.isWhite = isWhite;
     }
 
     public boolean getIsWhite() {
@@ -35,10 +47,18 @@ public abstract class Piece {
         return this.isCaptured;
     }
 
+    public void setName(char name) {
+        this.name = name;
+    }
     public char getName() {
         return name;
     }
 
-    public abstract boolean isValidMove(Position from, Position to);
 
+    public boolean getIsFirstMove() {
+        return isFirstMove;
+    }
+    public void setIsFirstMove(boolean isFirstMove) {
+        this.isFirstMove = isFirstMove;
+    }
 }

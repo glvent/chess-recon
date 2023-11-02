@@ -6,13 +6,10 @@ import org.example.game.Position;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
-
 import org.example.game.Game;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class WebSocketHandler extends TextWebSocketHandler {
 
@@ -21,55 +18,45 @@ public class WebSocketHandler extends TextWebSocketHandler {
 
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-        // This will be called after the connection is established
         game = new Game();
-        Map<String, Object> message = new HashMap<>();
-
-        message.put("type", "NEW_GAME");
-        message.put("data", game);
-
-        session.sendMessage(new TextMessage(getJSON(message)));
+        sendMessage(session, "NEW_GAME", game);
     }
 
     @Override
-    public void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
+    public void handleTextMessage(WebSocketSession session, TextMessage message) {
         try {
-            Map parsedMessage = (Map) parseJSON(message.getPayload());
-            System.out.println("Parsed message: " + parsedMessage);
-
+            Map parsedMessage = gson.fromJson(message.getPayload(), Map.class);
             String messageType = (String) parsedMessage.get("type");
             Map messageData = (Map) parsedMessage.get("data");
-
             switch (messageType) {
-                case "MOVE_PIECE" -> {
-                    Map fromMap = (Map) messageData.get("from");
-                    Position from = new Position(((Double) fromMap.get("rank")).intValue(), ((Double) fromMap.get("file")).intValue());
-
-                    Map toMap = (Map) messageData.get("to");
-                    Position to = new Position(((Double) toMap.get("rank")).intValue(), ((Double) toMap.get("file")).intValue());
-
+                case "MOVE_PIECE":
+                    Position from = getPositionFromMap((Map) messageData.get("from"));
+                    Position to = getPositionFromMap((Map) messageData.get("to"));
                     game.movePiece(from, to);
-
-                    Map<String, Object> clientMessage = new HashMap<>();
-
-                    clientMessage.put("type", "UPDATE_BOARD");
-                    clientMessage.put("data", game.board);
-
-
-                    session.sendMessage(new TextMessage(getJSON(clientMessage)));
-                }
+                    if (game.invalidMove) {
+                        sendMessage(session, "INVALID_MOVE", null);
+                    } else {
+                        sendMessage(session, "UPDATE_BOARD", game);
+                    }
+                    break;
+                default:
+                    // Handle unknown messageType
+                    break;
             }
-        } catch (JsonSyntaxException e) {
-            System.out.println("handleTextMessage: " + e.getMessage());
+        } catch (JsonSyntaxException | IOException e) {
             // Handle exception - could notify client of bad request, for example
+            System.out.println("Exception: " + e.getMessage());
         }
     }
 
-    public <T> String getJSON(T obj) {
-        return gson.toJson(obj);
+    private Position getPositionFromMap(Map map) {
+        return new Position(((Double) map.get("rank")).intValue(), ((Double) map.get("file")).intValue());
     }
 
-    public Object parseJSON(String json) throws JsonSyntaxException {
-        return gson.fromJson(json, Object.class);
+    private void sendMessage(WebSocketSession session, String type, Object data) throws IOException {
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", type);
+        message.put("data", data);
+        session.sendMessage(new TextMessage(gson.toJson(message)));
     }
 }

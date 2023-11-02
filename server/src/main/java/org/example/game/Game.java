@@ -3,11 +3,17 @@ package org.example.game;
 import org.example.piece.*;
 import java.util.ArrayList;
 
+import static org.example.piece.Piece.intToChar;
+
 public class Game {
     public static final int BOARD_RANKS = 8;
     public static final int BOARD_FILES = 8;
     public Piece[][] board;
-    public ArrayList<String> history;
+    public ArrayList<Move> history;
+    public boolean isWhiteTurn = true;
+
+    public boolean invalidMove = false;
+
 
     public Game() {
         board = new Piece[BOARD_RANKS][BOARD_FILES];
@@ -17,20 +23,6 @@ public class Game {
     }
 
     public void initGame() {
-        // white pieces
-        for (int i = 0; i < BOARD_RANKS; i++) {
-            board[1][i] = new Pawn(true, new Position(1, i));
-        }
-
-        board[0][0] = new Rook(true, new Position(0, 0));
-        board[0][1] = new Knight(true, new Position(0, 1));
-        board[0][2] = new Bishop(true, new Position(0, 2));
-        board[0][3] = new Queen(true, new Position(0, 3));
-        board[0][4] = new King(true, new Position(0, 4));
-        board[0][5] = new Bishop(true, new Position(0, 5));
-        board[0][6] = new Knight(true, new Position(0, 6));
-        board[0][7] = new Rook(true, new Position(0, 7));
-
         // black pieces
         for (int i = 0; i < BOARD_RANKS; i++) {
             board[6][i] = new Pawn(false, new Position(6, i));
@@ -44,6 +36,20 @@ public class Game {
         board[7][5] = new Bishop(false, new Position(7, 5));
         board[7][6] = new Knight(false, new Position(7, 6));
         board[7][7] = new Rook(false, new Position(7, 7));
+
+        // white pieces
+        for (int i = 0; i < BOARD_RANKS; i++) {
+            board[1][i] = new Pawn(true, new Position(1, i));
+        }
+
+        board[0][0] = new Rook(true, new Position(0, 0));
+        board[0][1] = new Knight(true, new Position(0, 1));
+        board[0][2] = new Bishop(true, new Position(0, 2));
+        board[0][3] = new Queen(true, new Position(0, 3));
+        board[0][4] = new King(true, new Position(0, 4));
+        board[0][5] = new Bishop(true, new Position(0, 5));
+        board[0][6] = new Knight(true, new Position(0, 6));
+        board[0][7] = new Rook(true, new Position(0, 7));
 
     }
 
@@ -73,55 +79,69 @@ public class Game {
 
         System.out.print("   ");
         for (int file = 0; file < fileSize; file++) {
-            System.out.print(Piece.intToChar(file) + " ");
+            System.out.print(intToChar(file) + " ");
         }
         System.out.println();
     }
 
 
     public void movePiece(Position from, Position to) {
-        Piece fromPiece = board[from.getRank()][from.getFile()];
-        Piece toPiece = board[to.getRank()][to.getFile()];
+        invalidMove = true;
+        Piece movedPiece = board[from.getRank()][from.getFile()];
+        Piece capturedPiece = board[to.getRank()][to.getFile()];
+        Move previousMove = history.isEmpty() ? null : history.get(history.size() - 1);
 
+        if (movedPiece.isValidMove(from, to, capturedPiece, history.isEmpty() ? null : history.get(history.size() - 1) )
+                && movedPiece.getIsWhite() == isWhiteTurn) {
+            System.out.println("moved to " + intToChar(to.getFile()) + (to.getRank() + 1));
+            if (capturedPiece == null || movedPiece.getIsWhite() != capturedPiece.getIsWhite()) {
+                invalidMove = false;
+                // update the new board
+                board[to.getRank()][to.getFile()] = movedPiece;
+                board[from.getRank()][from.getFile()] = null;
 
-        if (fromPiece == null) return;
-        // if valid move...
-        // fromPiece.isValidMove(from, to) && fromPiece.getIsWhite() != toPiece.getIsWhite()
-        if (true) {
-            // update the new board
-            board[to.getRank()][to.getFile()] = fromPiece;
-            board[from.getRank()][from.getFile()] = null;
+                movedPiece.setPosition(to);
 
-            // update the piece
-            fromPiece.setPosition(to);
+                // is setting internal position really necessary?
 
-            if (toPiece != null) {
-                toPiece.setPosition(null);
-                toPiece.setIsCaptured(true);
+                if (capturedPiece != null) {
+                    capturedPiece.setPosition(null);
+                    capturedPiece.setIsCaptured(true);
+                } else if (Pawn.isValidEnPassant(from, to, previousMove)) {
+                    board[previousMove.getTo().getRank()][previousMove.getTo().getFile()].setPosition(null);
+                    board[previousMove.getTo().getRank()][previousMove.getTo().getFile()].setIsCaptured(true);
+
+                    board[previousMove.getTo().getRank()][previousMove.getTo().getFile()] = null;
+                }
+                Move move = new Move(from, to, movedPiece, capturedPiece, generateMoveNotation(from, to, movedPiece, capturedPiece));
+
+                System.out.println("to " + intToChar(to.getFile()) + (to.getRank() + 1));
+
+                history.add(move);
+                isWhiteTurn = !isWhiteTurn;
             }
-            //history.add(generateMoveNotation(from, to, fromPiece, toPiece));
+            //logBoard();
         }
 
-        logBoard();
     }
 
-    public String generateMoveNotation(Position from, Position to, Piece fromPiece, Piece toPiece) {
+    public String generateMoveNotation(Position from, Position to, Piece movedPiece, Piece capturedPiece) {
         String notation = "";
 
-        if (fromPiece.getName() != 'P') {
-            notation += fromPiece.getName();
+        if (movedPiece.getName() != 'P') {
+            notation += movedPiece.getName();
         }
 
         // handle disambiguating moves
         // (moves where 2 or more of the same piece and color can move to the same position)
 
-        ArrayList<Position> disambiguatedPositions = new ArrayList<Position>();
+       /* ArrayList<Position> disambiguatedPositions = new ArrayList<Position>();
         for (int i = 0; i < BOARD_RANKS; i++) {
             for (int j = 0; j < BOARD_FILES; j++) {
                 Piece piece = board[i][j];
 
-                if (piece != null && piece.getName() == fromPiece.getName() && piece.getIsWhite() == fromPiece.getIsWhite()) {
-                    if (piece.isValidMove(new Position(i, j), to)) {
+                if (piece != null && piece.getName() == movedPiece.getName() && piece.getIsWhite() == movedPiece.getIsWhite()) {
+                    if (piece.isValidMove(new Position(i, j), to, capturedPiece, history.isEmpty() ? null : history.get(history.size() - 1))) {
                         disambiguatedPositions.add(new Position(i, j));
                     }
                 }
@@ -141,19 +161,19 @@ public class Game {
                 }
             }
             if (!sameFile) {
-                notation += Piece.intToChar(from.getFile());
+                notation += intToChar(from.getFile());
             }
             if (!sameRank) {
-                notation += from.getRank();
+                notation += (from.getRank() + 1);
             }
-        }
+        } */
 
-        if (toPiece != null) {
+        if (capturedPiece != null) {
             notation += "x";
         }
 
-        notation += Piece.intToChar(to.getRank());
-        notation += to.getFile();
+        notation += intToChar(to.getFile());
+        notation += (to.getRank() + 1);
 
         // handle pawn promotion
 
