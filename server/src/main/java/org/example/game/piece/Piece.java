@@ -1,7 +1,9 @@
-package org.example.piece;
+package org.example.game.piece;
 
 import org.example.game.Move;
 import org.example.game.Position;
+
+import java.util.ArrayList;
 
 public abstract class Piece {
     private Position pos;
@@ -21,7 +23,8 @@ public abstract class Piece {
         return letter.charAt(i);
     }
 
-    public abstract boolean isValidMove(Position from, Position to, Piece capturedPiece, Move prevMove);
+    // pieces of same color are checked in the movePiece() method
+    public abstract boolean isValidMove(Position from, Position to, Piece[][] board, ArrayList<Move> history);
 
     public void setPosition(Position pos) {
         this.pos = pos;
@@ -61,4 +64,28 @@ public abstract class Piece {
     public void setIsFirstMove(boolean isFirstMove) {
         this.isFirstMove = isFirstMove;
     }
+
+    // check if the path is clear between from and to positions
+    protected boolean isPathClear(Position from, Position to, Piece[][] board) {
+        System.out.println(intToChar(to.getFile()) + to.getRank());
+        int rankDirection = Integer.compare(to.getRank(), from.getRank());
+        int fileDirection = Integer.compare(to.getFile(), from.getFile());
+
+        // check from the next cell
+        int currentRank = from.getRank() + rankDirection;
+        int currentFile = from.getFile() + fileDirection;
+
+        // while not at its intended destination
+        while (currentRank != to.getRank() || currentFile != to.getFile()) {
+            if (board[currentRank][currentFile] != null) {
+                return false; // path is not clear
+            }
+            currentRank += rankDirection;
+            currentFile += fileDirection;
+        }
+
+        // no pieces are in the way
+        return true;
+    }
+
 }

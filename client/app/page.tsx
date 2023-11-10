@@ -29,7 +29,7 @@ const pieceImages = {
 const Page = () => {
   const [pieceDragged, setPieceDragged] = useState<Piece | null>(null);
   const [enteredTile, setEnteredTile] = useState<Position | null>(null);
-  const { ws, board, history, clientUID } = useWebSocket(
+  const { ws, board, history, gameId, player } = useWebSocket(
     "ws://localhost:8080/ws",
   );
 
@@ -79,10 +79,12 @@ const Page = () => {
       const moveInfo = {
         from: pieceDragged?.pos,
         to: { rank: rankIndex, file: fileIndex },
+        isWhiteMoved: player?.isWhite,
       };
 
       console.log(
-        "moved to -> " +
+        player.isWhite +
+          " moved to -> " +
           files.charAt(moveInfo.to.file) +
           (moveInfo.to.rank + 1),
       );
@@ -107,22 +109,28 @@ const Page = () => {
   return !board ? (
     <h1 className="h-screen grid place-content-center ">loading board...</h1>
   ) : (
-    <div className="grid place-content-center gap-2 h-screen w-screen grid-flow-col">
-      <Board
-        board={board}
-        handleDragOver={handleDragOver}
-        handleDragLeave={handleDragLeave}
-        handleDrop={handleDrop}
-        handleDragStart={handleDragStart}
-        pieceImages={pieceImages}
-      />
-      <div className="mx-auto">
-        <button className="w-6 h-6 p-1 grid hover:brightness-95 rounded bg-violet-600">
-          <FontAwesomeIcon className="w-auto h-auto" icon={faRotateRight} />
-        </button>
+    <>
+      <h1>{gameId}</h1>
+      <div className="grid place-content-center gap-8 h-screen w-screen grid-flow-col">
+        <div className="flex-col flex">
+          <Board
+            board={board}
+            isWhite={player?.isWhite}
+            handleDragOver={handleDragOver}
+            handleDragLeave={handleDragLeave}
+            handleDrop={handleDrop}
+            handleDragStart={handleDragStart}
+            pieceImages={pieceImages}
+          />
+          <div className="self-end p-2">
+            <button className="w-4 h-4 grid hover:brightness-95 rounded">
+              <FontAwesomeIcon className="w-auto h-auto" icon={faRotateRight} />
+            </button>
+          </div>
+        </div>
+        <History history={history} />
       </div>
-      <History history={history} />
-    </div>
+    </>
   );
 };
 

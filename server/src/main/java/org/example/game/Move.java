@@ -1,7 +1,6 @@
 package org.example.game;
 
-import org.example.piece.Pawn;
-import org.example.piece.Piece;
+import org.example.game.piece.Piece;
 
 public class Move {
     private Position from;
